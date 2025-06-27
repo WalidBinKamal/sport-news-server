@@ -6,7 +6,12 @@ const port = process.env.PORT || 5000
 
 const app = express();
 //middleware setup
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',  // Your frontend origin
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],  // Allow PATCH explicitly
+    credentials: true
+}));
+
 app.use(express.json());
 
 
@@ -83,6 +88,18 @@ async function run() {
         app.post('/users', async (req, res) => {
             const user = req.body
             const result = await userCollection.insertOne(user)
+            res.send(result)
+        })
+
+        app.patch('/users', async (req, res) => {
+            const email = req.body.email
+            const filter = { email }
+            const updatedUser = {
+                $set: {
+                    lastSignInTime: req.body?.lastSignInTime
+                }
+            }
+            const result = await userCollection.updateOne(filter, updatedUser)
             res.send(result)
         })
 
