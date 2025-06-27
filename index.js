@@ -26,6 +26,7 @@ const client = new MongoClient(uri, {
 });
 
 const newsCollection = client.db("newsDB").collection("news");
+const userCollection = client.db("newsDB").collection("users");
 
 async function run() {
     try {
@@ -34,12 +35,10 @@ async function run() {
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
-
         app.get('/', (req, res) => {
             res.send('Sports news server is running');
         })
-
-        //News mongodb
+        //Database Api
 
         app.get('/news', async (req, res) => {
             const cursor = newsCollection.find()
@@ -67,7 +66,14 @@ async function run() {
             res.send(result)
         })
 
-        
+        //Users related API
+        app.post('/users', async (req, res) => {
+            const user = req.body
+            const result = await userCollection.insertOne(user)
+            res.send(result)
+        })
+
+
 
 
 
