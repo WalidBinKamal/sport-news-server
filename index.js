@@ -38,8 +38,8 @@ async function run() {
         app.get('/', (req, res) => {
             res.send('Sports news server is running');
         })
-        //Database Api
 
+        //Database Api
         app.get('/news', async (req, res) => {
             const cursor = newsCollection.find()
             const result = await cursor.toArray()
@@ -67,16 +67,31 @@ async function run() {
         })
 
         //Users related API
+        app.get('/users', async (req, res) => {
+            const cursor = userCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        app.get(`/users/:id`, async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await userCollection.findOne(query)
+            res.send(result)
+        })
+
         app.post('/users', async (req, res) => {
             const user = req.body
             const result = await userCollection.insertOne(user)
             res.send(result)
         })
 
-
-
-
-
+        app.delete(`/users/:id`, async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await userCollection.deleteOne(query)
+            res.send(result)
+        })
 
     } finally {
         // Ensures that the client will close when you finish/error
